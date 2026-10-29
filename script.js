@@ -36,15 +36,19 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
 /* Build cards and the enquiry dropdown from SERVICES */
 $('#grid').innerHTML = SERVICES.map(([t, ic, d]) => `
-  <article class="card rv"><div class="card__ic"><i class="fa-solid ${ic}"></i></div>
+  <article class="card"><div class="card__ic"><i class="fa-solid ${ic}"></i></div>
   <h3>${t}</h3><p>${d}</p><a href="#enquiry" data-service="${t}">Enquire Now <i class="fa-solid fa-arrow-right"></i></a></article>`).join('');
 $('#reviews-grid').innerHTML = REVIEWS.map(([n, t]) => `
-  <figure class="review rv"><div class="stars" role="img" aria-label="5 out of 5 stars">${'<i class="fa-solid fa-star"></i>'.repeat(5)}</div>
+  <figure class="review"><div class="stars" role="img" aria-label="5 out of 5 stars">${'<i class="fa-solid fa-star"></i>'.repeat(5)}</div>
   <blockquote>${t}</blockquote><figcaption><span class="av">${n[0]}</span>${n}</figcaption></figure>`).join('');
 $('#service').insertAdjacentHTML('beforeend', SERVICES.map(([t]) => `<option>${t}</option>`).join('') + '<option>Other</option>');
 $('#marquee').innerHTML = [...SERVICES, ...SERVICES].map(s => `<span><i class="fa-solid fa-circle"></i>${s[0]}</span>`).join('');
 $('#year').textContent = new Date().getFullYear();
 $$('[data-wa]').forEach(a => a.href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(CONFIG.waMessage)}`);
+
+/* Carousels: independent instances for Services and Reviews */
+initCarousel($('#grid'), 'Services');
+initCarousel($('#reviews-grid'), 'Customer reviews');
 
 /* Enquire Now: preselect service, then scroll (anchor does the scrolling) */
 $('#grid').addEventListener('click', e => {
@@ -109,3 +113,83 @@ form.addEventListener('submit', async e => {
   } catch { say('Sorry, it could not be sent. Please call or WhatsApp us.', 'bad'); }
   finally { btn.disabled = false; btn.textContent = 'Send Enquiry'; }
 });
+
+/* ===== Reusable carousel (vanilla). Cards per view come from the CSS variable --per (1 / 2 / 3). =====
+   Arrows and dots move by one "page" (--per cards). Supports touch/mouse drag, keyboard arrows, and focus. */
+function initCarousel(track, label) {
+  const slides = [...track.children], n = slides.length;
+  const wrap = document.createElement('div'); wrap.className = 'carousel rv';
+  const view = document.createElement('div'); view.className = 'cview';
+  const ctl = document.createElement('div'); ctl.className = 'cctl';
+  ctl.innerHTML = `<button type="button" class="cbtn" aria-label="Previous ${label}"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="cdots" role="group" aria-label="${label} pages"></div>
+    <button type="button" class="cbtn" aria-label="Next ${label}"><i class="fa-solid fa-chevron-right"></i></button>`;
+  track.before(wrap); track.classList.add('ctrack'); view.append(track); wrap.append(view, ctl);
+  view.tabIndex = 0;
+  view.setAttribute('role', 'region'); view.setAttribute('aria-roledescription', 'carousel'); view.setAttribute('aria-label', label);
+  slides.forEach((s, i) => { s.setAttribute('role', 'group'); s.setAttribute('aria-roledescription', 'slide'); s.setAttribute('aria-label', `${i + 1} of ${n}`); });
+  const [prev, next] = $$('.cbtn', ctl), dotsBox = $('.cdots', ctl);
+  let idx = 0, per = 1, step = 0, pages = 1, dots = [];
+
+  function measure() {
+    per = Math.min(n, parseInt(getComputedStyle(wrap).getPropertyValue('--per')) || 1);
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    step = slides[0].offsetWidth + gap;
+    const p = Math.ceil(n / per);
+    if (p !== pages || !dots.length) {
+      pages = p;
+      dotsBox.innerHTML = Array.from({ length: pages }, (_, i) => `<button type="button" class="cdot" aria-label="Go to page ${i + 1} of ${pages}"></button>`).join('');
+      dots = $$('.cdot', dotsBox);
+      dots.forEach((d, i) => d.addEventListener('click', () => go(i * per)));
+    }
+    ctl.classList.toggle('one', pages < 2);
+  }
+  function go(i, animate = true) {
+    const max = n - per;
+    idx = Math.max(0, Math.min(i, max));
+    track.style.transition = animate ? '' : 'none';
+    track.style.transform = `translateX(${-idx * step}px)`;
+    prev.disabled = idx <= 0; next.disabled = idx >= max;
+    const page = idx >= max ? pages - 1 : Math.round(idx / per);
+    dots.forEach((d, p) => { d.classList.toggle('on', p === page); d.toggleAttribute('aria-current', p === page); });
+  }
+  prev.addEventListener('click', () => go(idx - per));
+  next.addEventListener('click', () => go(idx + per));
+  view.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(idx - per); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(idx + per); }
+  });
+  /* Keyboard focus on a hidden card brings its page into view */
+  view.addEventListener('focusin', e => {
+    const i = slides.findIndex(s => s.contains(e.target));
+    if (i >= 0 && (i < idx || i >= idx + per)) go(Math.floor(i / per) * per);
+  });
+  view.addEventListener('scroll', () => { view.scrollLeft = 0; });
+
+  /* Touch + mouse drag. touch-action: pan-y keeps vertical page scrolling working. */
+  let startX = 0, dx = 0, down = false, moved = false, pid = 0, t0 = 0;
+  view.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    down = true; moved = false; dx = 0; startX = e.clientX; pid = e.pointerId; t0 = Date.now();
+  });
+  view.addEventListener('pointermove', e => {
+    if (!down || e.pointerId !== pid) return;
+    dx = e.clientX - startX;
+    if (!moved && Math.abs(dx) > 6) { moved = true; view.setPointerCapture(pid); view.classList.add('drag'); }
+    if (moved) { track.style.transition = 'none'; track.style.transform = `translateX(${-idx * step + dx}px)`; }
+  });
+  const end = () => {
+    if (!down) return; down = false;
+    if (!moved) return;
+    view.classList.remove('drag');
+    const quick = Math.abs(dx) / Math.max(1, Date.now() - t0) > .4;
+    if (Math.abs(dx) > 50 || quick) go(dx < 0 ? idx + per : idx - per); else go(idx);
+  };
+  view.addEventListener('pointerup', end);
+  view.addEventListener('pointercancel', end);
+  view.addEventListener('dragstart', e => e.preventDefault());
+  view.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+
+  new ResizeObserver(() => { measure(); go(idx, false); }).observe(view);
+  measure(); go(0, false);
+}

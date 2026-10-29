@@ -104,3 +104,70 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--or);box-
 .footer{background:#14070a}
 .sec--grey{background:linear-gradient(180deg,#f7f3f3,#f1ecec)}
 @media(min-width:900px){.scene{height:440px}.stack{width:270px;height:270px}.hero{padding:6rem 0 7rem}.cta__in{grid-template-columns:1.4fr 1fr}.cta .row{justify-content:flex-end}}
+
+/* ===== Carousels ===== */
+.carousel{--per:1;--gap:1.1rem;min-width:0}
+@media(min-width:640px){.carousel{--per:2}}
+@media(min-width:900px){.carousel{--per:3}}
+.cview{overflow:hidden;padding:.9rem 0;margin:-.9rem 0 0;touch-action:pan-y;cursor:grab}
+.cview.drag{cursor:grabbing;user-select:none}
+.carousel .ctrack{display:flex;gap:var(--gap);transition:transform .5s cubic-bezier(.22,.8,.3,1);will-change:transform}
+.carousel .ctrack>*{flex:0 0 calc((100% - (var(--per) - 1) * var(--gap)) / var(--per));min-width:0}
+.carousel .card{display:flex;flex-direction:column}.carousel .card a{margin-top:auto}
+.cctl{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:1.2rem}
+.cctl.one .cdots{visibility:hidden}
+.cbtn{width:48px;height:48px;border-radius:50%;border:2px solid var(--or);background:#fff;color:var(--or);cursor:pointer;font-size:1rem;transition:.2s}
+.cbtn:hover:not(:disabled){background:var(--or);color:#fff}.cbtn:disabled{opacity:.35;cursor:default}
+.cdots{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.cdot{width:12px;height:12px;padding:0;border-radius:99px;border:0;background:#d8cfcf;cursor:pointer;transition:.3s;position:relative}
+.cdot::after{content:"";position:absolute;inset:-8px}
+.cdot.on{width:30px;background:var(--or)}
+
+/* ===== Glassmorphism cards (services, reviews, about facts) ===== */
+#services,#reviews{position:relative;overflow:hidden;isolation:isolate}
+#services{background:linear-gradient(180deg,#fff,#fdeeee)}
+#reviews{background:linear-gradient(180deg,#fdeeee,#f7e4e4)}
+#services .wrap,#reviews .wrap{position:relative;z-index:1}
+#services::before,#services::after,#reviews::before,#reviews::after{content:"";position:absolute;z-index:0;width:420px;height:420px;border-radius:50%;filter:blur(30px);pointer-events:none;background:radial-gradient(circle,rgba(255,75,85,.55),rgba(215,25,32,0) 70%)}
+#services::before{top:-120px;left:-100px}#services::after{bottom:-140px;right:-100px;background:radial-gradient(circle,rgba(168,15,23,.45),rgba(168,15,23,0) 70%)}
+#reviews::before{top:-100px;right:-80px}#reviews::after{bottom:-140px;left:-100px;background:radial-gradient(circle,rgba(168,15,23,.4),rgba(168,15,23,0) 70%)}
+.card,.review,.facts li{
+  background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.75) 50%,transparent 60%) no-repeat -160% 0/260% 100%,rgba(255,255,255,.5);
+  -webkit-backdrop-filter:blur(14px) saturate(170%);backdrop-filter:blur(14px) saturate(170%);
+  border:1px solid rgba(255,255,255,.75);
+  box-shadow:0 8px 32px rgba(168,15,23,.12),inset 0 1px 0 rgba(255,255,255,.9);
+  transition:transform .15s,box-shadow .35s,border-color .35s,background-position .8s}
+.card{transform:perspective(800px) translateY(var(--ty,0)) rotateX(var(--rx,0)) rotateY(var(--ry,0))}
+.card:hover,.review:hover,.facts li:hover{background-position:160% 0,0 0;border-color:rgba(215,25,32,.5);box-shadow:0 18px 48px rgba(168,15,23,.28),0 0 0 1px rgba(215,25,32,.25),inset 0 1px 0 #fff}
+.card:hover{--ty:-8px}.review:hover{transform:translateY(-8px)}
+.card:hover .card__ic{box-shadow:0 10px 26px rgba(215,25,32,.55)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.card,.review,.facts li{background:rgba(255,255,255,.92)}}
+
+/* ===== Request a Quote: glass form + styled fields ===== */
+#enquiry{position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(180deg,#fdeeee,#fff)}
+#enquiry .wrap{position:relative;z-index:1}
+#enquiry::before,#enquiry::after{content:"";position:absolute;z-index:0;width:400px;height:400px;border-radius:50%;filter:blur(30px);pointer-events:none;background:radial-gradient(circle,rgba(255,75,85,.5),rgba(215,25,32,0) 70%)}
+#enquiry::before{top:-100px;right:-80px}#enquiry::after{bottom:-140px;left:-100px;background:radial-gradient(circle,rgba(168,15,23,.4),rgba(168,15,23,0) 70%)}
+#enquiry .narrow{max-width:860px}
+.form{padding:1.5rem;border-radius:16px;background:rgba(255,255,255,.5);-webkit-backdrop-filter:blur(16px) saturate(170%);backdrop-filter:blur(16px) saturate(170%);border:1px solid rgba(255,255,255,.8);box-shadow:0 12px 40px rgba(168,15,23,.14),inset 0 1px 0 #fff}
+.form label{font-size:.85rem;letter-spacing:.02em}
+.form input,.form select,.form textarea{background:rgba(255,255,255,.75);border:1.5px solid rgba(215,25,32,.18);border-radius:10px;padding:.85rem 1rem;transition:border-color .2s,box-shadow .2s,background .2s,transform .2s}
+.form input:hover,.form select:hover,.form textarea:hover{border-color:rgba(215,25,32,.5)}
+.form input:focus,.form select:focus,.form textarea:focus{background:#fff;border-color:var(--or);box-shadow:0 0 0 4px rgba(215,25,32,.14),0 8px 20px rgba(215,25,32,.12);transform:translateY(-1px)}
+.form select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:2.6rem;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%23D71920' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center}
+.form textarea{resize:vertical;min-height:120px}
+.form .btn{background:linear-gradient(135deg,#ff4b55,#A80F17);border:0;box-shadow:0 10px 24px rgba(215,25,32,.35);width:100%}
+.form .btn:hover{transform:translateY(-3px);box-shadow:0 16px 32px rgba(215,25,32,.45)}
+@media(min-width:700px){
+  .form{padding:2.2rem;grid-template-columns:1fr 1fr;column-gap:1.2rem}
+  .form .f:nth-of-type(5),.form .btn,.form .status{grid-column:1/-1}
+  .form .btn{justify-self:start;width:auto;min-width:220px}
+}
+
+/* About: same glass setup as Services (glow backdrop + glass fact boxes) */
+#about{position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(180deg,#fdeeee,#fff)}
+#about .wrap{position:relative;z-index:1}
+#about::before,#about::after{content:"";position:absolute;z-index:0;width:420px;height:420px;border-radius:50%;filter:blur(30px);pointer-events:none;background:radial-gradient(circle,rgba(255,75,85,.5),rgba(215,25,32,0) 70%)}
+#about::before{top:-120px;right:-100px}#about::after{bottom:-140px;left:-100px;background:radial-gradient(circle,rgba(168,15,23,.4),rgba(168,15,23,0) 70%)}
+.facts li{padding:1.2rem;align-items:center}
+.facts li:hover{transform:translateY(-6px)}
