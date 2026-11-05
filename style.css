@@ -195,3 +195,15 @@ html{scroll-padding-top:82px}
 .photo__badge{position:absolute;z-index:2;left:-1rem;bottom:1.5rem;display:flex;align-items:center;gap:.8rem;padding:.8rem 1.1rem;border-radius:14px;color:#fff;background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.4);box-shadow:0 12px 30px rgba(0,0,0,.3);animation:bob 5s ease-in-out infinite}
 .photo__badge i{font-size:1.4rem;color:#ff9aa0}.photo__badge span{font-size:.85rem;line-height:1.35}.photo__badge strong{display:block;font-size:1rem}
 @media(max-width:480px){.photo__badge{left:.5rem}}
+
+/* Brands rolling strip */
+.brands{padding:3rem 0 4rem;background:#fff;overflow:hidden}
+.brands h2{margin-bottom:1.8rem}
+.brands__row{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);padding:.6rem 0}
+.brands__t{display:flex;width:max-content;animation:brands 35s linear infinite}
+.brands__dup{display:contents}
+.brands__row:hover .brands__t,.brands__row:focus-within .brands__t{animation-play-state:paused}
+.brand{flex:none;margin:0 .6rem;padding:1rem 2.2rem;min-width:150px;text-align:center;font:700 1.25rem 'Space Grotesk',sans-serif;letter-spacing:.04em;color:#5f6368;background:rgba(255,255,255,.7);border:1px solid rgba(215,25,32,.14);border-radius:14px;box-shadow:0 6px 20px rgba(168,15,23,.08);transition:.3s}
+.brand:hover{color:var(--or);border-color:rgba(215,25,32,.5);transform:translateY(-4px);box-shadow:0 14px 30px rgba(168,15,23,.22)}
+@keyframes brands{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.brands__t{width:auto;flex-wrap:wrap;justify-content:center;animation:none!important}.brands__dup{display:none}}

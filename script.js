@@ -31,6 +31,8 @@ const REVIEWS = [
   ['Sandeep Kumar', 'Very friendly staff and a smooth customer experience. They answered my questions patiently and helped me find a suitable product for my requirements.'],
   ['Ananya Mishra', 'Good overall experience. The team was approachable, the product options were explained properly, and the service was professional. Would recommend checking them out.']
 ];
+/* ===== BRANDS: names shown on the shop signboard. Edit to match the brands you actually deal in. ===== */
+const BRANDS = ['ASUS', 'AMD', 'HP', 'Lenovo', 'Acer', 'Samsung', 'LG', 'BenQ', 'Epson', 'Canon', 'D-Link', 'Honeywell', 'Intex'];
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -43,6 +45,8 @@ $('#reviews-grid').innerHTML = REVIEWS.map(([n, t]) => `
   <blockquote>${t}</blockquote><figcaption><span class="av">${n[0]}</span>${n}</figcaption></figure>`).join('');
 $('#service').insertAdjacentHTML('beforeend', SERVICES.map(([t]) => `<option>${t}</option>`).join('') + '<option>Other</option>');
 $('#marquee').innerHTML = [...SERVICES, ...SERVICES].map(s => `<span><i class="fa-solid fa-circle"></i>${s[0]}</span>`).join('');
+const brandSet = BRANDS.map(b => `<span class="brand">${b}</span>`).join('');
+$('#brands-row').innerHTML = `<div class="brands__t">${brandSet}<span class="brands__dup" aria-hidden="true">${brandSet}</span></div>`;
 $('#year').textContent = new Date().getFullYear();
 $$('[data-wa]').forEach(a => a.href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(CONFIG.waMessage)}`);
 
