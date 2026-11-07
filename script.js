@@ -33,6 +33,15 @@ const REVIEWS = [
 ];
 /* ===== BRANDS: names shown on the shop signboard. Edit to match the brands you actually deal in. ===== */
 const BRANDS = ['ASUS', 'AMD', 'HP', 'Lenovo', 'Acer', 'Samsung', 'LG', 'BenQ', 'Epson', 'Canon', 'D-Link', 'Honeywell', 'Intex'];
+/* ===== GALLERY: to use a real photo, save it in images/ with the 'src' file name (e.g. images/desktop.jpg); until it exists the 'fallback' illustration is shown.
+   Add photos by setting src (put files in images/). Entries without src show a placeholder tile. ===== */
+const GALLERY = [
+  { src: 'shopfront.jpg', alt: 'RB INFO SOLUTION shop signboard, Saheed Nagar', cap: 'Our shop, Saheed Nagar' },
+  { src: 'desktops.jpg', fallback: 'images/desktop.svg', alt: 'Illustration of a desktop computer with monitor, tower and keyboard', cap: 'Desktop computers' },
+  { src: 'cctv (1).jpg', fallback: 'images/cctv.svg', alt: 'Illustration of a CCTV security camera', cap: 'CCTV cameras' },
+  { src: 'graphics.jpg', fallback: 'images/graphics-card.svg', alt: 'Illustration of a dual-fan graphics card', cap: 'Graphics cards' },
+  { src: 'projector.jpg', fallback: 'images/projector.svg', alt: 'Illustration of a projector', cap: 'Projectors' }
+];
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -45,8 +54,23 @@ $('#reviews-grid').innerHTML = REVIEWS.map(([n, t]) => `
   <blockquote>${t}</blockquote><figcaption><span class="av">${n[0]}</span>${n}</figcaption></figure>`).join('');
 $('#service').insertAdjacentHTML('beforeend', SERVICES.map(([t]) => `<option>${t}</option>`).join('') + '<option>Other</option>');
 $('#marquee').innerHTML = [...SERVICES, ...SERVICES].map(s => `<span><i class="fa-solid fa-circle"></i>${s[0]}</span>`).join('');
-const brandSet = BRANDS.map(b => `<span class="brand">${b}</span>`).join('');
+/* Coloured text fallback for brands without a bundled logo mark */
+const BRAND_TEXT_COLORS = { BenQ: '#5C2D91', Canon: '#CC0000', 'D-Link': '#00539F', Honeywell: '#E4002B', Intex: '#0057B8' };
+const brandSet = BRANDS.map(b => {
+  const l = BRAND_LOGOS[b];
+  return l ? `<span class="brand"><svg viewBox="0 0 24 24" fill="${l.c}" aria-hidden="true"><path d="${l.p}"/></svg>${b}</span>`
+           : `<span class="brand brand--txt" style="color:${BRAND_TEXT_COLORS[b] || '#D71920'}">${b}</span>`;
+}).join('');
 $('#brands-row').innerHTML = `<div class="brands__t">${brandSet}<span class="brands__dup" aria-hidden="true">${brandSet}</span></div>`;
+$('#gallery-grid').innerHTML = GALLERY.map((g, i) => g.src
+  ? `<figure class="shot${i === 0 ? ' shot--big' : ''} rv"><button type="button" data-i="${i}" aria-label="View photo: ${g.cap}"><img src="${g.src}" alt="${g.alt || g.cap}" loading="lazy"${g.fallback ? ` onerror="this.onerror=null;this.src='${g.fallback}'"` : ''}><figcaption>${g.cap}</figcaption></button></figure>`
+  : `<figure class="shot shot--ph rv"><i class="fa-solid ${g.icon}"></i><span>Photo coming soon</span><figcaption>${g.cap}</figcaption></figure>`).join('');
+const lb = $('#lightbox');
+$('#gallery-grid').addEventListener('click', e => {
+  const b = e.target.closest('button[data-i]'); if (!b) return;
+  const g = GALLERY[b.dataset.i]; $('img', lb).src = $('img', b).currentSrc || g.src; $('img', lb).alt = g.alt || g.cap; $('p', lb).textContent = g.cap; lb.showModal();
+});
+lb.addEventListener('click', e => { if (e.target === lb || e.target.closest('.lb__x')) lb.close(); });
 $('#year').textContent = new Date().getFullYear();
 $$('[data-wa]').forEach(a => a.href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(CONFIG.waMessage)}`);
 

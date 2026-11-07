@@ -207,3 +207,33 @@ html{scroll-padding-top:82px}
 .brand:hover{color:var(--or);border-color:rgba(215,25,32,.5);transform:translateY(-4px);box-shadow:0 14px 30px rgba(168,15,23,.22)}
 @keyframes brands{to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.brands__t{width:auto;flex-wrap:wrap;justify-content:center;animation:none!important}.brands__dup{display:none}}
+
+/* Coloured brand logos */
+.brand{display:inline-flex;align-items:center;justify-content:center;gap:.7rem}
+.brand svg{width:28px;height:28px;flex:none}
+.brand--txt{font-weight:800}
+.brand:not(.brand--txt):hover{color:var(--ink)}
+/* Gallery */
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.shot{margin:0;position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:4/3;border:1px solid rgba(215,25,32,.14);box-shadow:0 8px 24px rgba(168,15,23,.1);transition:transform .3s,box-shadow .3s}
+.shot:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(168,15,23,.25)}
+.shot button{all:unset;display:block;width:100%;height:100%;cursor:zoom-in}
+.shot button:focus-visible{outline:3px solid var(--or);outline-offset:-3px}
+.shot img{width:100%;height:100%;object-fit:cover;transition:transform .6s}.shot:hover img{transform:scale(1.07)}
+.shot figcaption{position:absolute;left:0;right:0;bottom:0;padding:1.6rem 1rem .8rem;color:#fff;font-weight:600;background:linear-gradient(transparent,rgba(110,8,14,.85))}
+.shot--ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;background:repeating-linear-gradient(45deg,#fdf3f3,#fdf3f3 12px,#fae6e6 12px,#fae6e6 24px)}
+.shot--ph i{font-size:2rem;color:var(--or)}.shot--ph span{font-size:.85rem;color:var(--mut)}
+.shot--ph figcaption{background:none;color:var(--dor);text-align:center}
+#lightbox{border:0;padding:0;background:transparent;max-width:min(92vw,900px);overflow:visible}
+#lightbox::backdrop{background:rgba(20,7,10,.85)}
+#lightbox img{display:block;max-width:100%;max-height:80vh;border-radius:12px;margin:auto}
+#lightbox p{color:#fff;text-align:center;margin:.8rem 0 0}
+.lb__x{position:absolute;right:-.5rem;top:-1.2rem;width:44px;height:44px;border-radius:50%;border:0;background:var(--or);color:#fff;cursor:pointer;font-size:1.1rem}
+@media(min-width:900px){.gallery{grid-template-columns:repeat(3,1fr)}.shot--big{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}}
+.shot img[src*="printers"]{object-fit:contain;background:#fff}
+
+/* Mobile: keep all carousel dots on one line */
+@media(max-width:639px){
+  .cctl{gap:.6rem}.cdots{flex-wrap:nowrap;gap:.3rem}
+  .cdot{width:8px;height:8px}.cdot.on{width:20px}.cdot::after{inset:-10px -3px}
+}
