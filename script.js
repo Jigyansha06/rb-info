@@ -40,7 +40,8 @@ const GALLERY = [
   { src: 'desktops.jpg', fallback: 'images/desktop.svg', alt: 'Illustration of a desktop computer with monitor, tower and keyboard', cap: 'Desktop computers' },
   { src: 'cctv (1).jpg', fallback: 'images/cctv.svg', alt: 'Illustration of a CCTV security camera', cap: 'CCTV cameras' },
   { src: 'graphics.jpg', fallback: 'images/graphics-card.svg', alt: 'Illustration of a dual-fan graphics card', cap: 'Graphics cards' },
-  { src: 'projector.jpg', fallback: 'images/projector.svg', alt: 'Illustration of a projector', cap: 'Projectors' }
+  { src: 'projector.jpg', fallback: 'images/projector.svg', alt: 'Illustration of a projector', cap: 'Projectors' },
+  { src: 'printers.jpg', fallback: 'images/printers.svg', alt: 'Illustration of a network router with antennas', cap: 'Printers' }
 ];
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
